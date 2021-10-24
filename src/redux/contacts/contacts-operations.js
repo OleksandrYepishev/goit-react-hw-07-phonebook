@@ -1,52 +1,51 @@
-import {nanoid  } from '@reduxjs/toolkit';
+import { nanoid, createAsyncThunk } from '@reduxjs/toolkit';
 import * as contactsAPI from '../../services/contacts-api';
 import {
-  fetchContactsSuccess,
-  fetchContactsRequest,
-  fetchContactsError,
-  addContactRequest,
-  addContactSuccess,
-  addContactError,
-  deleteContactRequest,
-  deleteContactSuccess,
-  deleteContactError,
 } from '../contacts/contacts-actions';
 
-export const fetchContacts = () => async dispatch => {
-    dispatch(fetchContactsRequest());
-
+export const fetchContacts = createAsyncThunk('contacts/fetchContacts',
+    async(_data, {rejectWithValue}) => {
     try {
-        const contacts = await contactsAPI.fetchContacts();
-        dispatch(fetchContactsSuccess(contacts));
+        return await contactsAPI.fetchContacts();
     } catch (error) {
-        dispatch(fetchContactsError(error));
-    }   
-};
+        return rejectWithValue(error.message);
+        }   
+    },
+);
 
-export const addContact = data => async dispatch => {
-    const newContact = {
-        id: nanoid(),
-        ...data,
-    }
+export const addContact = createAsyncThunk('contacts/addContact',
+    async (data, { rejectWithValue }) => {
+        try {
+            const newContact = {
+                id: nanoid(),
+                ...data,
+            }
+            return await contactsAPI.addContact(newContact);
+        } catch (error) {
+        return rejectWithValue(error.message);
+        }   
+    },
+);
+ 
+export const deleteContact = createAsyncThunk('contacts/deleteContact',
+    async ( id, { rejectWithValue }) => {
+        try {
+           await contactsAPI.deleteContact(id);
+            return id;
+        } catch (error) {
+        return rejectWithValue(error.message);
+        }   
+    },
+);
+ 
 
-    dispatch(addContactRequest());
+// export const deleteContact = id => async dispatch => {
+//     dispatch(deleteContactRequest());
 
-    try {
-        const contact = await contactsAPI.addContact(newContact);
-        dispatch(addContactSuccess(contact));
-    } catch (error) {
-        dispatch(addContactError(error));
-    } 
-};
-
-
-export const deleteContact = id => async dispatch => {
-    dispatch(deleteContactRequest());
-
-    try {
-        await contactsAPI.deleteContact(id);
-        dispatch(deleteContactSuccess(id));
-    } catch (error) {
-        dispatch(deleteContactError(error));
-    }   
-};
+//     try {
+//         await contactsAPI.deleteContact(id);
+//         dispatch(deleteContactSuccess(id));
+//     } catch (error) {
+//         dispatch(deleteContactError(error));
+//     }   
+// };
