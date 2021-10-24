@@ -38,14 +38,3 @@ export const deleteContact = createAsyncThunk('contacts/deleteContact',
     },
 );
  
-
-// export const deleteContact = id => async dispatch => {
-//     dispatch(deleteContactRequest());
-
-//     try {
-//         await contactsAPI.deleteContact(id);
-//         dispatch(deleteContactSuccess(id));
-//     } catch (error) {
-//         dispatch(deleteContactError(error));
-//     }   
-// };
