@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { nanoid } from '@reduxjs/toolkit';
 import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
-import phonebookActions from '../../redux/contacts/contacts-actions';
+import * as contactsOperation from '../../redux/contacts/contacts-operations';
 import { getContacts } from '../../redux/contacts/contacts-selectors';
 import { ImUsers, ImProfile, ImPhone } from 'react-icons/im';
 
@@ -15,7 +15,7 @@ export const Form = () => {
   const dispatch = useDispatch();
 
   const onSubmit = ({ name, number }) =>
-    dispatch(phonebookActions.addContact({ name, number }));
+    dispatch(contactsOperation.addContact({ name, number }));
 
   const nameInputId = nanoid();
   const numberInputId = nanoid();

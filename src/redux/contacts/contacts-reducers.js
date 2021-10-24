@@ -1,15 +1,44 @@
 import { combineReducers } from 'redux';
 import { createReducer } from '@reduxjs/toolkit';
-import actions from '../contacts/contacts-actions';
-import initialContacts from '../../data/contacts.json';
+import {
+  fetchContactsSuccess,
+  fetchContactsRequest,
+  fetchContactsError,
+  addContactRequest,
+  addContactSuccess,
+  addContactError,
+  deleteContactRequest,
+  deleteContactSuccess,
+  deleteContactError,
+  changeFilter
+} from '../contacts/contacts-actions';
 
-const contacts = createReducer(initialContacts,{
-  [actions.addContact]: (state, { payload }) => [...state, payload],
-  [actions.deleteContact]: (state, {payload}) => state.filter(({ id }) => id !== payload),
+
+const contacts = createReducer([], {
+  [fetchContactsSuccess]: (_state, { payload }) => payload,
+  [addContactSuccess]: (state, { payload }) => [...state, payload],
+  [deleteContactSuccess]: (state, {payload}) => state.filter(({ id }) => id !== payload),
 });
 
 const filter = createReducer('', {
-  [actions.changeFilter]: (_state, {payload}) => payload,
+  [changeFilter]: (_state, {payload}) => payload,
 });
 
-export default combineReducers({ contacts, filter, });
+const isLoading = createReducer(false, {
+  [fetchContactsRequest]: () => true,
+  [fetchContactsSuccess]: () => false,
+  [fetchContactsError]: () => false,
+  [addContactRequest]: () => true,
+  [addContactSuccess]: () => false,
+  [addContactError]: () => false,
+  [deleteContactRequest]: () => true,
+  [deleteContactSuccess]: () => false,
+  [deleteContactError]: () => false,
+});
+
+const error = createReducer(null, {
+  [fetchContactsError]: (_state, { payload }) => payload,
+  [fetchContactsRequest]: () => null,
+})
+
+export default combineReducers({ contacts, isLoading, error, filter});
